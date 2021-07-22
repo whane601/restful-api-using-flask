@@ -50,7 +50,7 @@ class UserList(Resource):
             return jsonify(users)
         except Exception as ex:
             logger.error("Get /users error: {}".format(ex))
-            return jsonify("Get /users error: {}".format(ex)), 520
+            return "Get /users error: {}".format(ex), 520
 
     @api.expect(user_model, validate=True)
     def post(self):
@@ -69,7 +69,7 @@ class UserList(Resource):
             return jsonify(user.serialize())
         except Exception as ex:
             logger.error("Post /users error: {}".format(ex))
-            return jsonify("Post /users error: {}".format(ex)), 521
+            return "Post /users error: {}".format(ex), 521
 
 
 @ api.route("/users/<int:user_id>")
@@ -85,7 +85,7 @@ class UserInformation(Resource):
             return jsonify(user.serialize())
         except Exception as ex:
             logger.error("Get /users/user_id error: {}".format(ex))
-            return jsonify("Get /users/user_id error: {}".format(ex)), 522
+            return "Get /users/user_id error: {}".format(ex), 522
 
     @api.expect(user_model, validate=False)
     def put(self, user_id):
@@ -111,7 +111,7 @@ class UserInformation(Resource):
             return jsonify(user.serialize())
         except Exception as ex:
             logger.error("Put /users/user_id error: {}".format(ex))
-            return jsonify("Put /users/user_id error: {}".format(ex)), 523
+            return "Put /users/user_id error: {}".format(ex), 523
 
     def delete(self, user_id):
         try:
@@ -124,10 +124,10 @@ class UserInformation(Resource):
             session.commit()
             logger.info("Delete user_id = {} successfully".format(user_id))
 
-            return jsonify("Delete user successfully! user_id: {}".format(user_id))
+            return "Delete user successfully! user_id: {}".format(user_id)
         except Exception as ex:
             logger.error("Delete /users/user_id error: {}".format(ex))
-            return jsonify("Delete /users/user_id error: {}".format(ex)), 524
+            return "Delete /users/user_id error: {}".format(ex), 524
 
 
 if __name__ == "__main__":
