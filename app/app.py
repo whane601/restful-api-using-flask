@@ -35,7 +35,7 @@ communicate_information_model = api.model("CommunicateInformation", {
 user_model = api.model("User", {
     "name": fields.String(description="The name of user", example="Charles", required=True),
     "job_title": fields.String(description="The job title of user", example="SRE", required=True),
-    "communicate_information": fields.Nested(communicate_information_model),
+    "communicate_information": fields.Nested(communicate_information_model, description="The communicate information of user", required=True),
 })
 
 
