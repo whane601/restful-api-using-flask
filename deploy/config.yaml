@@ -1,0 +1,5 @@
+# Server
+DEBUG_MODE: True
+
+# DB
+DATABASE_URL: "sqlite:///demo.db"
