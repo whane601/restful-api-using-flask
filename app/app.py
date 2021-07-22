@@ -87,7 +87,7 @@ class UserInformation(Resource):
             logger.error("Get /users/user_id error: {}".format(ex))
             return jsonify("Get /users/user_id error: {}".format(ex)), 522
 
-    @api.expect(user_model, validate=True)
+    @api.expect(user_model, validate=False)
     def put(self, user_id):
         try:
             user = session.query(User).filter(User.id == user_id).first()
@@ -96,10 +96,15 @@ class UserInformation(Resource):
                 return "Not found user! user_id: {}".format(user_id), 519
 
             request_data = api.payload
-            user.name = request_data["name"]
-            user.job_title = request_data["job_title"]
-            user.email = request_data["communicate_information"]["email"]
-            user.mobile = request_data["communicate_information"]["mobile"]
+            if "name" in request_data:
+                user.name = request_data["name"]
+            if "job_title" in request_data:
+                user.job_title = request_data["job_title"] or user.job_title
+            if "communicate_information" in request_data:
+                if "email" in request_data["communicate_information"]:
+                    user.email = request_data["communicate_information"]["email"]
+                if "mobile" in request_data["communicate_information"]:
+                    user.mobile = request_data["communicate_information"]["mobile"]
             session.commit()
             logger.info("Update user_id = {} successfully".format(user_id))
 
