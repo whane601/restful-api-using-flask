@@ -1,0 +1,16 @@
+version: "2.3"
+services: 
+    api_server:
+        env_file: .env
+        image: "${PROJECT_NAME}:${IMAGE_TAG}"
+        build: .
+        ports: 
+            - "${EXPORT_PORT}:${ENTER_PORT}"
+        volumes: 
+            - ${PWD}/../:/opt/app_workspace
+        restart: always
+        shm_size: "${SHM_SIZE}"
+        stdin_open: true
+        tty: true
+        command: bash -c "sed -i -E 's,config_path = (.*),config_path = \"${CONFIG_PATH}\",g' app/app.py; 
+                          gunicorn -b ${HOST}:${ENTER_PORT} app.app:app "
