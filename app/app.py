@@ -58,5 +58,49 @@ class UserList(Resource):
             return jsonify("Post /users error: {}".format(ex)), 521
 
 
+@ api.route("/users/<int:user_id>")
+class UserInformation(Resource):
+    def get(self, user_id):
+        try:
+            user = session.query(User).filter(User.id == user_id).first()
+            if user is None:
+                return "Not found user! user_id: {}".format(user_id), 519
+
+            return jsonify(user.serialize())
+        except Exception as ex:
+            return jsonify("Get /users/user_id error: {}".format(ex)), 522
+
+    @api.expect(user_model, validate=True)
+    def put(self, user_id):
+        try:
+            user = session.query(User).filter(User.id == user_id).first()
+            if user is None:
+                return "Not found user! user_id: {}".format(user_id), 519
+
+            request_data = api.payload
+            user.name = request_data["name"]
+            user.job_title = request_data["job_title"]
+            user.email = request_data["communicate_information"]["email"]
+            user.mobile = request_data["communicate_information"]["mobile"]
+            session.commit()
+
+            return jsonify(user.serialize())
+        except Exception as ex:
+            return jsonify("Put /users/user_id error: {}".format(ex)), 523
+
+    def delete(self, user_id):
+        try:
+            user = session.query(User).filter(User.id == user_id).first()
+            if user is None:
+                return "Not found user! user_id: {}".format(user_id), 519
+
+            session.delete(user)
+            session.commit()
+
+            return jsonify("Delete user successfully! user_id: {}".format(user_id))
+        except Exception as ex:
+            return jsonify("Delete /users/user_id error: {}".format(ex)), 524
+
+
 if __name__ == "__main__":
     app.run(debug=config["DEBUG_MODE"])
