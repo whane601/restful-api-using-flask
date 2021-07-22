@@ -35,7 +35,7 @@ communicate_information_model = api.model("CommunicateInformation", {
 user_model = api.model("User", {
     "name": fields.String(description="The name of user", example="Charles", required=True),
     "job_title": fields.String(description="The job title of user", example="SRE", required=True),
-    "communicate_information": fields.Nested(communicate_information_model),
+    "communicate_information": fields.Nested(communicate_information_model, description="The communicate information of user", required=True),
 })
 
 
@@ -50,7 +50,7 @@ class UserList(Resource):
             return jsonify(users)
         except Exception as ex:
             logger.error("Get /users error: {}".format(ex))
-            return jsonify("Get /users error: {}".format(ex)), 520
+            return "Get /users error: {}".format(ex), 520
 
     @api.expect(user_model, validate=True)
     def post(self):
@@ -69,7 +69,7 @@ class UserList(Resource):
             return jsonify(user.serialize())
         except Exception as ex:
             logger.error("Post /users error: {}".format(ex))
-            return jsonify("Post /users error: {}".format(ex)), 521
+            return "Post /users error: {}".format(ex), 521
 
 
 @ api.route("/users/<int:user_id>")
@@ -85,9 +85,9 @@ class UserInformation(Resource):
             return jsonify(user.serialize())
         except Exception as ex:
             logger.error("Get /users/user_id error: {}".format(ex))
-            return jsonify("Get /users/user_id error: {}".format(ex)), 522
+            return "Get /users/user_id error: {}".format(ex), 522
 
-    @api.expect(user_model, validate=True)
+    @api.expect(user_model, validate=False)
     def put(self, user_id):
         try:
             user = session.query(User).filter(User.id == user_id).first()
@@ -96,17 +96,22 @@ class UserInformation(Resource):
                 return "Not found user! user_id: {}".format(user_id), 519
 
             request_data = api.payload
-            user.name = request_data["name"]
-            user.job_title = request_data["job_title"]
-            user.email = request_data["communicate_information"]["email"]
-            user.mobile = request_data["communicate_information"]["mobile"]
+            if "name" in request_data:
+                user.name = request_data["name"]
+            if "job_title" in request_data:
+                user.job_title = request_data["job_title"] or user.job_title
+            if "communicate_information" in request_data:
+                if "email" in request_data["communicate_information"]:
+                    user.email = request_data["communicate_information"]["email"]
+                if "mobile" in request_data["communicate_information"]:
+                    user.mobile = request_data["communicate_information"]["mobile"]
             session.commit()
             logger.info("Update user_id = {} successfully".format(user_id))
 
             return jsonify(user.serialize())
         except Exception as ex:
             logger.error("Put /users/user_id error: {}".format(ex))
-            return jsonify("Put /users/user_id error: {}".format(ex)), 523
+            return "Put /users/user_id error: {}".format(ex), 523
 
     def delete(self, user_id):
         try:
@@ -119,10 +124,10 @@ class UserInformation(Resource):
             session.commit()
             logger.info("Delete user_id = {} successfully".format(user_id))
 
-            return jsonify("Delete user successfully! user_id: {}".format(user_id))
+            return "Delete user successfully! user_id: {}".format(user_id)
         except Exception as ex:
             logger.error("Delete /users/user_id error: {}".format(ex))
-            return jsonify("Delete /users/user_id error: {}".format(ex)), 524
+            return "Delete /users/user_id error: {}".format(ex), 524
 
 
 if __name__ == "__main__":
