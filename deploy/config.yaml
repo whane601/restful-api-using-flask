@@ -1,0 +1,7 @@
+# Server
+LOG_LEVEL: DEBUG
+LOG_FILE_NAME: "log/debug.log"
+DEBUG_MODE: True
+
+# DB
+DATABASE_URL: "sqlite:///demo.db"

@@ -1,0 +1,17 @@
+# Byte-Compiled File
+__pycache__/
+
+# MacOS
+.DS_Store
+
+# Visual Studio Code
+.vscode/
+
+# DB Date
+*.db
+
+# Log File
+*.log
+
+# Virtual Env
+venv/
